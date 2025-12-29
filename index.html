@@ -3,65 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Punto de Venta Pro - Adaptativo</title>
+    <title>Punto de Venta Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        :root { --accent: #25d366; --dark: #212529; }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', system-ui, sans-serif; }
-        
-        /* Adaptabilidad de Tarjetas */
-        .product-card { border: none; border-radius: 12px; transition: 0.2s; cursor: pointer; background: white; height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        :root { --accent: #25d366; }
+        body { background-color: #f8f9fa; font-family: system-ui, sans-serif; }
+        .product-card { border: none; border-radius: 12px; transition: 0.2s; cursor: pointer; background: white; height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .product-card:active { transform: scale(0.95); }
-        .img-prod { height: 110px; width: 100%; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px; background: #eee; }
-        
-        /* Carrito Flotante para Móvil */
+        .img-prod { height: 110px; width: 100%; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px; }
         .cart-container { background: white; border-radius: 15px; padding: 15px; position: sticky; top: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* Logo */
-        #logo-preview { max-height: 80px; object-fit: contain; margin-bottom: 10px; display: none; }
-        .navbar-brand img { max-height: 40px; margin-right: 10px; }
-
-        /* Estilo de botones adaptativos */
-        @media (max-width: 576px) {
-            .btn-lg-mobile { width: 100%; margin-bottom: 10px; }
-            .nav-pills .nav-link { font-size: 12px; padding: 8px 10px; }
-        }
+        /* Estilo para el logo en el ticket y barra */
+        .nav-logo { max-height: 40px; margin-right: 10px; border-radius: 5px; }
+        #logo-preview { max-height: 100px; margin-bottom: 10px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-dark bg-dark sticky-top shadow-sm">
-    <div class="container-fluid d-flex flex-column flex-sm-row">
+    <div class="container-fluid d-flex flex-column flex-sm-row text-center text-sm-start">
         <a class="navbar-brand fw-bold mb-2 mb-sm-0" id="nav-logo-container">
-            🏪 Tortas Kika
+            <img src="logot.png" class="nav-logo" onerror="this.style.display='none'"> Mi Negocio
         </a>
         <ul class="nav nav-pills" id="pills-tab" role="tablist">
-            <li class="nav-item"><button class="nav-link active text-white" data-bs-toggle="pill" data-bs-target="#vta" onclick="renderVentas()">Ventas</button></li>
-            <li class="nav-item"><button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#inv" onclick="renderGestion()">Inventario</button></li>
+            <li class="nav-item"><button class="nav-link active text-white" data-bs-toggle="pill" data-bs-target="#vta">Ventas</button></li>
+            <li class="nav-item"><button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#inv">Inventario</button></li>
             <li class="nav-item"><button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#box" onclick="renderCorte()">Corte</button></li>
         </ul>
     </div>
 </nav>
 
 <div class="container mt-4">
-    <div class="tab-content" id="pills-tabContent">
+    <div class="tab-content">
         
         <div class="tab-pane fade show active" id="vta">
             <div class="row">
                 <div class="col-lg-8">
-                    <input type="text" id="bus" class="form-control mb-3 shadow-sm p-3" placeholder="🔍 Buscar producto..." onkeyup="renderVentas()">
+                    <input type="text" id="bus" class="form-control mb-3 p-3 shadow-sm" placeholder="🔍 Buscar producto..." onkeyup="renderVentas()">
                     <div class="row row-cols-2 row-cols-md-3 g-3" id="grid-ventas"></div>
                 </div>
                 <div class="col-lg-4 mt-4 mt-lg-0">
                     <div class="cart-container">
-                        <h5 class="fw-bold">🛒 Orden</h5>
+                        <h5 class="fw-bold">🛒 Orden Actual</h5>
                         <div id="items-carrito" class="my-3" style="max-height: 300px; overflow-y: auto;"></div>
                         <div class="d-flex justify-content-between align-items-center border-top pt-3">
                             <span class="h4 mb-0">Total:</span>
                             <span id="total-vta" class="h4 mb-0 text-success fw-bold">$0.00</span>
                         </div>
-                        <button class="btn btn-dark w-100 mt-3 py-3 fw-bold shadow" onclick="finalizarVenta()">COBRAR Y TICKET</button>
+                        <button class="btn btn-success w-100 mt-3 py-3 fw-bold shadow" onclick="finalizarVenta()">COBRAR Y ENVIAR</button>
                     </div>
                 </div>
             </div>
@@ -70,26 +59,21 @@
         <div class="tab-pane fade" id="inv">
             <div class="row">
                 <div class="col-md-5">
-                    <div class="card p-4 shadow-sm border-0 mb-4">
-                        <h5 id="form-title">Agregar Producto</h5>
+                    <div class="card p-4 shadow-sm border-0 mb-4 text-center">
+                        <img src="logot.png" id="logo-preview" onerror="this.src='https://via.placeholder.com/100?text=Logo+No+Encontrado'">
+                        <h5 id="form-title">Gestionar Producto</h5>
                         <input type="hidden" id="edit-id">
                         <input type="text" id="n-nom" class="form-control mb-2" placeholder="Nombre">
                         <input type="number" id="n-pre" class="form-control mb-2" placeholder="Precio $">
                         <input type="file" id="n-img" class="form-control mb-3" accept="image/*">
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-primary w-100" id="btn-save" onclick="guardarProducto()">Guardar</button>
-                            <button class="btn btn-secondary" id="btn-cancel" style="display:none" onclick="limpiarForm()">X</button>
-                        </div>
-                        <hr>
-                        <h6>Logo del Negocio</h6>
-                        <input type="file" class="form-control mb-2" accept="image/*" onchange="subirLogo(this)">
-                        <img id="logo-preview" class="img-fluid rounded border">
+                        <button class="btn btn-primary w-100 mb-2" onclick="guardarProducto()">Guardar Cambios</button>
+                        <button class="btn btn-secondary w-100" onclick="limpiarForm()">Cancelar</button>
                     </div>
                 </div>
                 <div class="col-md-7">
                     <div class="card p-3 border-0 shadow-sm overflow-auto">
                         <table class="table align-middle">
-                            <thead class="table-light"><tr><th>Imagen</th><th>Producto</th><th>Precio</th><th>Acciones</th></tr></thead>
+                            <thead><tr><th>Img</th><th>Producto</th><th>Precio</th><th>Acciones</th></tr></thead>
                             <tbody id="tabla-prod"></tbody>
                         </table>
                     </div>
@@ -99,63 +83,49 @@
 
         <div class="tab-pane fade" id="box">
             <div class="card p-4 shadow-sm border-0 bg-white">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="mb-0">📊 Corte del Día</h3>
-                    <button class="btn btn-outline-danger btn-sm" onclick="limpiarCorte()">Borrar Historial</button>
+                <h3 class="mb-4">📊 Corte de Caja</h3>
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-6"><div class="p-3 border rounded"><h6>Total Efectivo</h6><h2 class="text-success" id="c-tot">$0.00</h2></div></div>
+                    <div class="col-6"><div class="p-3 border rounded"><h6>Vendidos</h6><h2 id="c-qty">0</h2></div></div>
                 </div>
-                <div class="row g-3 mb-4">
-                    <div class="col-6"><div class="p-3 border rounded text-center"><h6>Total Dinero</h6><h2 class="text-success" id="c-tot">$0.00</h2></div></div>
-                    <div class="col-6"><div class="p-3 border rounded text-center"><h6>Productos</h6><h2 id="c-qty">0</h2></div></div>
-                </div>
-                <h5>Ventas por Artículo:</h5>
                 <div id="c-detalles" class="list-group"></div>
+                <button class="btn btn-outline-danger mt-4 btn-sm" onclick="limpiarCorte()">Reiniciar Ventas del Día</button>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    let productos = JSON.parse(localStorage.getItem('p_data')) || [];
+    // Menú Inicial (puedes editar esto)
+    const MENU_INICIAL = [
+        { id: 1, nom: "Taco Pastor", pre: 15, img: "https://via.placeholder.com/150?text=Taco" },
+        { id: 2, nom: "Refresco", pre: 25, img: "https://via.placeholder.com/150?text=Bebida" }
+    ];
+
+    let productos = JSON.parse(localStorage.getItem('p_data'));
+    if (!productos || productos.length === 0) {
+        productos = MENU_INICIAL;
+        localStorage.setItem('p_data', JSON.stringify(productos));
+    }
+
     let ventas = JSON.parse(localStorage.getItem('v_data')) || [];
-    let logoNegocio = localStorage.getItem('p_logo') || "";
     let carrito = {};
 
-    // --- CARGA DE LOGO ---
-    function subirLogo(input) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            logoNegocio = e.target.result;
-            localStorage.setItem('p_logo', logoNegocio);
-            actualizarLogoUI();
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-
-    function actualizarLogoUI() {
-        if(logoNegocio) {
-            document.getElementById('logo-preview').src = logoNegocio;
-            document.getElementById('logo-preview').style.display = "block";
-            document.getElementById('nav-logo-container').innerHTML = `<img src="${logoNegocio}"> Mi Negocio`;
-        }
-    }
-
-    // --- GESTIÓN DE PRODUCTOS (GUARDAR / EDITAR) ---
     function guardarProducto() {
         const nom = document.getElementById('n-nom').value;
         const pre = document.getElementById('n-pre').value;
         const file = document.getElementById('n-img').files[0];
         const editId = document.getElementById('edit-id').value;
 
-        if(!nom || !pre) return alert("Nombre y precio obligatorios");
+        if(!nom || !pre) return alert("Faltan datos");
 
-        const procesar = (imgBase64) => {
+        const procesar = (img64) => {
             if(editId) {
                 let p = productos.find(x => x.id == editId);
                 p.nom = nom; p.pre = parseFloat(pre);
-                if(imgBase64) p.img = imgBase64;
+                if(img64) p.img = img64;
             } else {
-                productos.push({ id: Date.now(), nom, pre: parseFloat(pre), img: imgBase64 || 'https://via.placeholder.com/150' });
+                productos.push({ id: Date.now(), nom, pre: parseFloat(pre), img: img64 || 'https://via.placeholder.com/150' });
             }
             localStorage.setItem('p_data', JSON.stringify(productos));
             limpiarForm(); renderGestion(); renderVentas();
@@ -165,9 +135,7 @@
             const reader = new FileReader();
             reader.onload = (e) => procesar(e.target.result);
             reader.readAsDataURL(file);
-        } else {
-            procesar(null);
-        }
+        } else { procesar(null); }
     }
 
     function prepararEdicion(id) {
@@ -176,29 +144,23 @@
         document.getElementById('n-nom').value = p.nom;
         document.getElementById('n-pre').value = p.pre;
         document.getElementById('form-title').innerText = "Editando Producto";
-        document.getElementById('btn-save').innerText = "Actualizar Cambios";
-        document.getElementById('btn-cancel').style.display = "block";
     }
 
     function limpiarForm() {
         document.getElementById('edit-id').value = '';
         document.getElementById('n-nom').value = '';
         document.getElementById('n-pre').value = '';
-        document.getElementById('n-img').value = '';
-        document.getElementById('form-title').innerText = "Agregar Producto";
-        document.getElementById('btn-save').innerText = "Guardar";
-        document.getElementById('btn-cancel').style.display = "none";
+        document.getElementById('form-title').innerText = "Gestionar Producto";
     }
 
     function eliminarProducto(id) {
-        if(confirm("¿Eliminar este producto?")) {
+        if(confirm("¿Eliminar?")) {
             productos = productos.filter(p => p.id != id);
             localStorage.setItem('p_data', JSON.stringify(productos));
             renderGestion(); renderVentas();
         }
     }
 
-    // --- LÓGICA DE VENTAS Y CARRITO ---
     function modCar(id, delta) {
         const p = productos.find(x => x.id == id);
         if(!carrito[id]) carrito[id] = { nom: p.nom, pre: p.pre, qty: 0 };
@@ -212,8 +174,8 @@
         let t = 0; c.innerHTML = '';
         Object.keys(carrito).forEach(id => {
             const i = carrito[id]; t += i.pre * i.qty;
-            c.innerHTML += `<div class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-                <div><b>${i.nom}</b><br><small>$${i.pre} x ${i.qty}</small></div>
+            c.innerHTML += `<div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded shadow-sm">
+                <span><b>${i.qty}</b> x ${i.nom}</span>
                 <div class="btn-group btn-group-sm">
                     <button class="btn btn-outline-dark" onclick="modCar(${id},-1)">-</button>
                     <button class="btn btn-outline-dark" onclick="modCar(${id},1)">+</button>
@@ -224,28 +186,43 @@
     }
 
     function finalizarVenta() {
-        if(Object.keys(carrito).length == 0) return alert("Carrito vacío");
-        let t = 0; let msg = "✅ *ORDEN* %0A";
+        if(Object.keys(carrito).length == 0) return;
+        let t = 0; let msg = "*🧾 TICKET DE VENTA*%0A--------------------------%0A";
         Object.keys(carrito).forEach(id => {
             const i = carrito[id];
             t += i.pre * i.qty;
-            msg += `• ${i.qty} ${i.nom} ($${(i.pre*i.qty).toFixed(2)})%0A`;
+            msg += `• ${i.qty} ${i.nom} - $${(i.pre*i.qty).toFixed(2)}%0A`;
             ventas.push({...i, fecha: new Date()});
         });
-        msg += `*%0A TOTAL: $${t.toFixed(2)}*`;
+        msg += `--------------------------%0A*TOTAL: $${t.toFixed(2)}*%0A%0A¡Gracias por su preferencia!`;
         localStorage.setItem('v_data', JSON.stringify(ventas));
         
         generarPDF(t);
-        if(confirm("¿Enviar por WhatsApp?")) window.open(`https://wa.me/?text=${msg}`, '_blank');
-        
-        carrito = {}; renderCarrito(); renderCorte();
+        setTimeout(() => {
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+            carrito = {}; renderCarrito();
+        }, 800);
     }
 
-    function generarPDF(total) {
+    async function generarPDF(total) {
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ format: [80, 160] });
+        const doc = new jsPDF({ format: [80, 150] });
         let y = 10;
-        if(logoNegocio) { doc.addImage(logoNegocio, 'PNG', 30, y, 20, 20); y += 25; }
+
+        // Intentar cargar el logo logot.png en el PDF
+        try {
+            const img = new Image();
+            img.src = 'logot.png';
+            await new Promise((resolve) => {
+                img.onload = () => {
+                    doc.addImage(img, 'PNG', 30, y, 20, 20);
+                    y += 25;
+                    resolve();
+                };
+                img.onerror = () => { y += 5; resolve(); }; // Si no carga, solo salta espacio
+            });
+        } catch(e) { y += 5; }
+
         doc.setFontSize(10); doc.text("TICKET DE VENTA", 40, y, {align:'center'}); y += 10;
         Object.keys(carrito).forEach(id => {
             const i = carrito[id];
@@ -258,7 +235,6 @@
         doc.save(`Ticket_${Date.now()}.pdf`);
     }
 
-    // --- REPORTES ---
     function renderCorte() {
         let t = 0; let q = 0; let r = {};
         ventas.forEach(v => {
@@ -273,7 +249,7 @@
         });
     }
 
-    function limpiarCorte() { if(confirm("¿Borrar historial?")) { ventas = []; localStorage.setItem('v_data','[]'); renderCorte(); } }
+    function limpiarCorte() { if(confirm("¿Borrar?")) { ventas = []; localStorage.setItem('v_data','[]'); renderCorte(); } }
 
     function renderVentas() {
         const g = document.getElementById('grid-ventas');
@@ -282,7 +258,7 @@
         productos.filter(p => p.nom.toLowerCase().includes(b)).forEach(p => {
             g.innerHTML += `<div class="col"><div class="card product-card shadow-sm" onclick="modCar(${p.id},1)">
                 <img src="${p.img}" class="img-prod">
-                <div class="card-body p-2"><h6 class="mb-0 small fw-bold">${p.nom}</h6><span class="text-primary fw-bold">$${p.pre}</span></div>
+                <div class="card-body p-2 text-center"><h6 class="mb-0 small fw-bold">${p.nom}</h6><span class="text-success fw-bold">$${p.pre}</span></div>
             </div></div>`;
         });
     }
@@ -291,7 +267,7 @@
         const t = document.getElementById('tabla-prod'); t.innerHTML = '';
         productos.forEach(p => {
             t.innerHTML += `<tr>
-                <td><img src="${p.img}" width="40" height="40" class="rounded shadow-sm"></td>
+                <td><img src="${p.img}" width="40" height="40" style="object-fit:cover" class="rounded shadow-sm"></td>
                 <td><small>${p.nom}</small></td>
                 <td><small>$${p.pre}</small></td>
                 <td>
@@ -302,10 +278,7 @@
         });
     }
 
-    actualizarLogoUI();
-    renderVentas();
-    renderGestion();
-    renderCorte();
+    renderVentas(); renderGestion();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
